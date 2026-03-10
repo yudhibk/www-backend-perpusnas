@@ -1,0 +1,1 @@
+<script src="<?=base_url('themes/umkm')?>/js/rev-setting-1.js"></script>
