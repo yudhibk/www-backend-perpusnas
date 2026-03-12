@@ -173,42 +173,41 @@
   $('#btn_perms').click(function() {
     var data_post = $(":checkbox:checked").serializeArray();
     var url = '<?= base_url('api/access/add_to_group/' . $group->id) ?>';
-    console.log(data_post);
-
+    // console.log(data_post);
     $.ajax({
-        url: url,
-        type: 'POST',
-        dataType: 'json',
-        data: data_post,
-      })
-      .done(function(res) {
-        console.log(res)
-        if (res.status === 201) {
-          Swal.fire({
-            title: 'Success',
-            text: 'Access berhasil disimpan',
-            type: 'success',
-            showConfirmButton: false,
-            timer: 3000
-          });
+      url: url,
+      type: 'POST',
+      dataType: 'json',
+      data: data_post,
+    })
+    .done(function(res) {
+      // console.log(res)
+      if (res.status === 201) {
+        Swal.fire({
+          title: 'Success',
+          text: 'Access berhasil disimpan',
+          type: 'success',
+          showConfirmButton: false,
+          timer: 3000
+        });
 
-          setTimeout(function() {
-            window.location.href = '<?= base_url('access?group_id=' . $group->id) ?>';
-          }, 2000);
-        } else {
-          $('#frm_edit_message').html(res.messages.error);
-        }
-      })
-      .fail(function(res) {
-        console.log(res);
-        $('#frm_edit_message').html(res.responseJSON.messages.error);
-      })
-      .always(function() {
-        $('.loading').hide();
-        $('html, body').animate({
-          scrollTop: $(document).height()
+        setTimeout(function() {
+          window.location.href = '<?= base_url('access?group_id=' . $group->id) ?>';
         }, 2000);
-      });
+      } else {
+        $('#frm_edit_message').html(res.messages.error);
+      }
+    })
+    .fail(function(res) {
+      // console.log(res);
+      $('#frm_edit_message').html(res.responseJSON.messages.error);
+    })
+    .always(function() {
+      $('.loading').hide();
+      $('html, body').animate({
+        scrollTop: $(document).height()
+      }, 2000);
+    });
 
     return false;
   });
@@ -233,9 +232,7 @@
     $.each($(":checkbox:checked"), function(i) {
       values[i] = $(this).val();
     });
-
-    console.log(values);
-
+    // console.log(values);
     return values;
   }
 
@@ -244,10 +241,10 @@
     $('.parent-menu').each(function() {
       var menu = $(this).data('menu');
       if (menu.includes(keyword)) {
-        console.log('true for: ' + menu);
+        // console.log('true for: ' + menu);
         $(this).show();
       } else {
-        console.log('false for: ' + menu);
+        // console.log('false for: ' + menu);
         $(this).hide()
       }
     });
