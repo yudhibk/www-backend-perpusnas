@@ -85,23 +85,23 @@ class Layanan extends \App\Controllers\BaseController
     $this->data['title'] = 'Tambah Layanan';
     // $slug = $this->request->getVar('slug');
     $user_id = get_user_id();
-    // $user_group = get_user_group_id($user_id);
-    // $groups = get_group($user_group);
+    $user_group = get_user_group_id($user_id);
+    $groups = get_group($user_group);
 
     $this->validation->setRule('title', 'Judul Layanan', 'required');
     if ($this->request->getPost() && $this->validation->withRequest($this->request)->run()) {
       $title = $this->request->getPost('title');
       $save_data = [
         'title' => $title,
-        'slug' => slugify($title),
+        'slug' => slugify(in_array($user_group, [1, 2, 20]) ? $this->request->getPost('channel') . ' ' . $title : $groups->name . ' ' . $title),
         'category' => 'Layanan',
-        'category_sub' => $this->request->getPost('category_sub'),
+        'category_sub' => in_array($user_group, [1, 2, 20]) ? $this->request->getPost('category_sub') : 'Unit Kerja',
         'sort' => $this->request->getPost('sort'),
         'url' => $this->request->getPost('url'),
         'description' => $this->request->getPost('description'),
         'content' => $this->request->getPost('content'),
         'created_by' => $user_id,
-        'channel' => $this->request->getPost('unit_kerja'),
+        'channel' => in_array($user_group, [1, 2, 20]) ? $this->request->getPost('channel') : $groups->name,
       ];
       
       // Logic Upload
@@ -169,21 +169,23 @@ class Layanan extends \App\Controllers\BaseController
     $this->data['layanan'] = $layanan;
     $user_id = get_user_id();
     $user_group = get_user_group_id($user_id);
-    // $groups = get_group($user_group);
+    $groups = get_group($user_group);
 
     $this->validation->setRule('title', 'Judul Layanan', 'required');
     if ($this->request->getPost()) {
       if ($this->validation->withRequest($this->request)->run()) {
         $title = $this->request->getPost('title');
+
         $update_data = [
           'title' => $title,
-          'slug' => slugify($title),
-          'category_sub' => $this->request->getPost('category_sub'),
+          'slug' => slugify(in_array($user_group, [1, 2, 20]) ? $this->request->getPost('channel') . ' ' . $title : $groups->name . ' ' . $title),
+          'category_sub' => in_array($user_group, [1, 2, 20]) ? $this->request->getPost('category_sub') : 'Unit Kerja',
           'sort' => $this->request->getPost('sort'),
           'url' => $this->request->getPost('url'),
           'description' => $this->request->getPost('description'),
           'content' => $this->request->getPost('content'),
           'updated_by' => $user_id,
+          'channel' => in_array($user_group, [1, 2, 20]) ? $this->request->getPost('channel') : $groups->name,
         ];
 
         // Logic Upload

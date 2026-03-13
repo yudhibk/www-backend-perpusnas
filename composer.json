@@ -16,7 +16,8 @@
         "myth/auth": "^1.0",
         "hermawan/codeigniter4-datatables": "^0.5.4",
         "tatter/thumbnails": "^1.2",
-        "steevedroz/ci4-slug": "^0.2.0"
+        "steevedroz/ci4-slug": "^0.2.0",
+        "ttskch/select2-bootstrap4-theme": "^1.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",

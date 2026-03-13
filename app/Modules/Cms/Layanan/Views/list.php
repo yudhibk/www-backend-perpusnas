@@ -125,7 +125,8 @@ $groups = get_group($user_group);
           orderable: false
         },
         {
-          data: 'category_sub'
+          data: 'category_sub',
+          className: 'text-center'
         },
         {
           data: 'title'

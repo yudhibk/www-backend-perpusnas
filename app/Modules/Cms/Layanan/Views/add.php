@@ -1,8 +1,9 @@
 <?php
 $request = \Config\Services::request();
 $request->uri->setSilent();
-
-$slug = $request->getVar('slug') ?? '';
+$user_id = get_user_id();
+$user_group = get_user_group_id($user_id);
+$groups = get_group($user_group);
 ?>
 
 <?= $this->extend(config('Core')->layout_backend); ?>
@@ -25,7 +26,8 @@ $slug = $request->getVar('slug') ?? '';
         <div class="page-title-icon">
           <i class="pe-7s-note icon-gradient bg-strong-bliss"></i>
         </div>
-        <div>Layanan <?= ucwords(unslugify($slug)) ?>
+        <div>
+           <span>Tambah Layanan</span>
           <div class="page-title-subheading">Mohon lengkapi data pada form berikut.</div>
         </div>
       </div>
@@ -48,14 +50,15 @@ $slug = $request->getVar('slug') ?? '';
       <div id="infoMessage"><?= $message ?? ''; ?></div>
       <?= get_message('message'); ?>
 
-      <form id="frm_create" class="col-md-12 mx-auto" method="post" action="<?= base_url('cms/layanan/create?slug=' . $slug); ?>">
+      <form id="frm_create" class="col-md-12 mx-auto" method="post" action="<?= base_url('cms/layanan/create'); ?>">
         <div class="form-row">
           <div class="col-md-3">
-            <div class="position-relative form-group">
+            <div class="position-relative form-group w-100">
               <label>Kategori*</label>
               <select class="form-control" name="category_sub" id="category_sub" tabindex="-1" aria-hidden="true">
+                <option value="">Pilih Kategori</option>
                 <?php foreach (get_ref('ref-layanan', 'slug') as $row): ?>
-                  <option value="<?= $row->name ?>" <?= (slugify($row->name) == $slug) ? 'selected' : '' ?>><?= $row->name ?></option>
+                  <option value="<?= $row->name ?>" <?php echo !in_array($user_group, [1, 2, 20]) && $row->name == 'Unit Kerja' ? 'selected' : '' ?>><?= $row->name ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
@@ -88,8 +91,9 @@ $slug = $request->getVar('slug') ?? '';
             <div class="position-relative form-group">
               <label for="channel">Unit Kerja</label>
               <select class="form-control" name="channel" id="channel" tabindex="-1" aria-hidden="true">
+                <option value="">Pilih Unit Kerja</option>
                 <?php foreach (get_ref_table('auth_groups', 'name,description', 'category="Unit Kerja"') as $row): ?>
-                  <option value="<?=$row->name?>"><?=$row->description?></option>
+                  <option value="<?=$row->name?>" <?php echo !in_array($user_group, [1, 2, 20]) && $row->name == $groups->name ? 'selected' : '' ?>><?=$row->description?></option>
                 <?php endforeach;?>
               </select>
             </div>
@@ -162,5 +166,39 @@ $slug = $request->getVar('slug') ?? '';
       content_style: "body { font-size: 12pt;}",
     });
   });
+
+  function attachChannel(disableStatus = <?php echo !in_array($user_group, [1, 2, 20]) ? 'true' : 'false' ?>) {
+    $('#channel').select2({
+      theme: 'bootstrap4',
+      templateResult: (state) => {
+        return state.text;
+      },
+      dropdownParent: $('#frm_create'),
+      width: '100%',
+      disabled: disableStatus
+    });
+  }
+
+  $('#category_sub').select2({
+    theme: 'bootstrap4',
+    templateResult: (state) => {
+      return state.text;
+    },
+    dropdownParent: $('#frm_create'),
+    width: '100%',
+    disabled: <?php echo !in_array($user_group, [1, 2, 20]) ? 'true' : 'false' ?>
+  });
+
+  $('#category_sub').on('change', function (e) {
+    if (e.target.value === 'Unit Kerja') {
+      $('#channel').select2('destroy');
+      attachChannel(false);
+    } else {
+      $('#channel').select2('destroy');
+      attachChannel(true);
+    }
+  });
+
+  attachChannel();
 </script>
 <?= $this->endSection('script'); ?>
